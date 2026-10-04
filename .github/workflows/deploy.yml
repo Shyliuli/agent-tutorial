@@ -33,6 +33,18 @@ jobs:
       - name: 构建静态站点
         run: mkdocs build --strict
 
+      - name: 打包站点产物供下载
+        run: |
+          cd site
+          zip -r ../agent-tutorial-site.zip .
+
+      - name: 上传可下载的产物压缩包
+        uses: actions/upload-artifact@v4
+        with:
+          name: agent-tutorial-site
+          path: agent-tutorial-site.zip
+          retention-days: 30
+
       - name: 配置 GitHub Pages
         uses: actions/configure-pages@v5
 
