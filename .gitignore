@@ -1,0 +1,8 @@
+# MkDocs 构建产物
+site/
+
+# Python 虚拟环境与缓存
+.venv/
+venv/
+__pycache__/
+*.pyc
