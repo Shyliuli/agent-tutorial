@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -39,6 +39,25 @@ jobs:
           name: agent-tutorial-site
           path: site
           retention-days: 30
+
+      - name: 打包站点压缩包
+        run: |
+          cd site
+          zip -r ../agent-tutorial-site.zip .
+          cd ..
+          ls -la agent-tutorial-site.zip
+
+      - name: 更新“最新构建”发布
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view latest --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1 \
+            || gh release create latest \
+                 --repo "$GITHUB_REPOSITORY" \
+                 --title "最新构建产物" \
+                 --notes "本页面始终保存教程站点的最新构建产物，下载 agent-tutorial-site.zip 解压后即可直接打开 index.html。"
+          gh release upload latest agent-tutorial-site.zip \
+            --repo "$GITHUB_REPOSITORY" --clobber
 
       - name: 配置 GitHub Pages
         uses: actions/configure-pages@v5
